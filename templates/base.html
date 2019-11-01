@@ -1,0 +1,19 @@
+<html>
+
+<head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Sistema não identificado</title>
+    {% endif %}
+</head>
+
+<body>
+    <div>
+        Sistema de Comunicação Interna: <a href="/index">Home</a>
+    </div>
+    <hr> {% block content %} {% endblock %}
+
+</body>
+
+</html>
