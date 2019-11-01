@@ -1,0 +1,1 @@
+FLASK_APP=circula_setor.py

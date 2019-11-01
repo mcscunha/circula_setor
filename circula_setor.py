@@ -35,3 +35,22 @@ LOG DE ALTERACOES
 
 versao = 1.0
 
+
+from database import Database
+from datetime import date
+from usuario import Usuario
+from web_app import app
+
+'''
+Database.conectar_banco()
+tup_dados = ('murilo',
+             'MuriloCunha',
+             '123',
+             'mcscunha@yahoo.com.br',
+             date.today().strftime('%d/%m/%Y')
+)
+u = Usuario()
+u.gravar_usuario(tup_dados)
+Database.recuperar_dados('SELECT * FROM usuario')
+Database.fechar_conexao()
+'''
