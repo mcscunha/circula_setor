@@ -2,16 +2,34 @@ name: circula_setor
 channels:
   - defaults
 dependencies:
+  - astroid=2.3.2=py37_0
   - ca-certificates=2019.10.16=0
   - certifi=2019.9.11=py37_0
+  - click=7.0=py37_0
+  - colorama=0.4.1=py37_0
+  - flask=1.1.1=py_0
+  - flask-wtf=0.14.2=py37_1
+  - isort=4.3.21=py37_0
+  - itsdangerous=1.1.0=py37_0
+  - jinja2=2.10.3=py_0
+  - lazy-object-proxy=1.4.2=py37he774522_0
+  - markupsafe=1.1.1=py37he774522_0
+  - mccabe=0.6.1=py37_1
   - openssl=1.1.1d=he774522_3
   - pip=19.3.1=py37_0
+  - pylint=2.4.3=py37_0
   - python=3.7.4=h5263a28_0
   - setuptools=41.6.0=py37_0
+  - six=1.12.0=py37_0
   - sqlite=3.30.1=he774522_0
+  - termcolor=1.1.0=py37_1
   - vc=14.1=h0510ff6_4
   - vs2015_runtime=14.16.27012=hf0eaf9b_0
+  - werkzeug=0.16.0=py_0
   - wheel=0.33.6=py37_0
   - wincertstore=0.2=py37_0
+  - wrapt=1.11.2=py37he774522_0
+  - wtforms=2.2.1=py37_0
+  - pip:
+    - python-dotenv==0.10.3
 prefix: C:\Anaconda3\envs\circula_setor
-

@@ -41,6 +41,8 @@ from datetime import date
 from usuario import Usuario
 from web_app import app
 
+
+
 '''
 Database.conectar_banco()
 tup_dados = ('murilo',
