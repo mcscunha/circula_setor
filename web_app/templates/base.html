@@ -12,7 +12,11 @@
     <div>
         <p>=== Circula_Setor - Sistema de Comunicacao Interna ===</p>
         <p><a href="{{ url_for('index') }}">Home</a></p>
-        <p><a href="{{ url_for('login') }}">Login</a></p>
+        {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% else %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% endif %}
     </div>
         
     <hr>

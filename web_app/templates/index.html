@@ -1,15 +1,5 @@
-<html>
-    <head>
-        <title>{{ title }}</title>
-    </head>
+{% extends "base.html" %}
 
-    <body>
-        <h1>Hello, {{ user.username }}!</h1>
-    </body>
-
-    <div>
-        Circula_Setor - Sistema de Comunicados Interno:
-        <br><a href="/index">Home</a>
-        <br><a href="/login">Login</a>
-    </div>
-</html>
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+{% endblock %}
