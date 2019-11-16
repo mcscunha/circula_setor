@@ -9,7 +9,9 @@ from web_app import db
 # Bibliotecas para construcao do LOGIN
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app import login
+from web_app import login
+# Sobre Gravatar
+from hashlib import md5
 
 
 #   Para saber qual usuario, a aplicacao faz uma busca no banco
@@ -19,21 +21,53 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+# Tabela auxiliar para relacionamento MUITOS-MUITOS
+# Um relacionametno na qual uma instancia DE UMA classe é
+# referenciada para outra instancia da MESMA classe
+# Isso é chamado relacao de auto referenciamento
+# (self-referential relationship)
+# Abaixo, estou relacionando USERS com USERS (leitores com escritores)
+followers = db.Table('followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+)
+
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     autor = db.relationship('Comunicado', backref='autor', lazy='dynamic')
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
+    followed = db.relationship(
+        'User',
+        secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'),
+        lazy='dynamic')
+    
     def __repr__(self):
         return '<Usuario: {}>\n<E-mail: {}>'.format(self.username, self.email)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    # Nao pode passar NONE para o parametro PASSWORD, pois da erro
+    # na hora do metodo CHECK_PASSWORD_HASH calcular o hash
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        if self.password_hash:
+            return check_password_hash(self.password_hash, password)
+        else:
+            return None
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
 
 class Setor(db.Model):
@@ -57,7 +91,8 @@ class Comunicado(db.Model):
     titulo = db.Column(db.String(100), index=True)
     comunicado = db.Column(db.Text)
     apagado = db.Column(db.String(1))
-    alteracoes = db.relationship('LogComunicado', backref='alteracoes', lazy='dynamic')
+    alteracoes = db.relationship(
+        'LogComunicado', backref='alteracoes', lazy='dynamic')
 
     def __repr(self):
         return '<\n\tCadastro: {} - Titulo: {}' + \
@@ -85,7 +120,7 @@ class LogComunicado(db.Model):
     data_atual = data_hora_atual.strftime('%d/%m/%Y')
     hora_atual = data_hora_atual.strftime('%H:%M')
 
-    id = db.Column(db.Integer, primary_key= True)
+    id = db.Column(db.Integer, primary_key=True)
     idComunicado = db.Column(db.Integer, db.ForeignKey('comunicado.id'))
     idUsuario = db.Column(db.Integer, db.ForeignKey('user.id'))
     dtCadastro = db.Column(db.Date, default=data_atual)
