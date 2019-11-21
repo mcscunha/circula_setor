@@ -38,9 +38,9 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    autor = db.relationship('Comunicado', backref='autor', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    autor = db.relationship('Comunicado', backref='autor', lazy='dynamic')
 
     followed = db.relationship(
         'User',
@@ -65,9 +65,32 @@ class User(UserMixin, db.Model):
             return None
 
     def avatar(self, size):
+        # ffef6a9fa57db9e8c0dfc21f7bf64309
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
             digest, size)
+
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(
+            followers.c.followed_id == user.id).count() > 0
+
+    def followed_posts(self):
+        followed = Comunicado.query.join(
+                followers, 
+                (followers.c.followed_id == Comunicado.idUsuario )
+            ).filter(
+                followers.c.follower_id == self.id
+            )
+        own = Comunicado.query.filter_by(idUsuario=self.id)
+        return followed.union(own).order_by(Comunicado.dtCadastro.desc())
 
 
 class Setor(db.Model):
@@ -87,7 +110,7 @@ class Comunicado(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     idUsuario = db.Column(db.Integer, db.ForeignKey('user.id'))
     idSetorOrigem = db.Column(db.Integer, db.ForeignKey('setor.id'))
-    dtCadastro = db.Column(db.Date, default=data_atual)
+    dtCadastro = db.Column(db.DateTime, default=data_hora_atual)
     titulo = db.Column(db.String(100), index=True)
     comunicado = db.Column(db.Text)
     apagado = db.Column(db.String(1))
