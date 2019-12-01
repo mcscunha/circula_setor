@@ -29,6 +29,9 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
+# Para "perceber" mudancas nos tipos de dados no MODELS
+migrate = Migrate(compare_type=True)
+migrate.init_app(app)
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
