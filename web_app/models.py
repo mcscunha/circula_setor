@@ -68,8 +68,27 @@ class User(UserMixin, db.Model):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
             digest, size)
+        
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
 
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
 
+    def is_following(self, user):
+        return self.followed.filter(
+            followers.c.followed_id == user.id).count() > 0
+
+    def followed_posts(self):
+        followed = Comunicado.query.join(
+            followers, (followers.c.followed_id == Comunicado.idUsuario)).filter(
+                followers.c.follower_id == self.id)
+        own = Comunicado.query.filter_by(idUsuario=self.id)
+        return followed.union(own).order_by(Comunicado.dtCadastro.desc())                
+    
+                
 class Setor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     setor = db.Column(db.String(100), index=True, unique=True)
