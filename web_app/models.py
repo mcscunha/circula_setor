@@ -14,7 +14,23 @@ from web_app import login
 from hashlib import md5
 
 
-#   Para saber qual usuario, a aplicacao faz uma busca no banco
+# Se nao existir qualquer usuario no banco, crie um administrador
+# com senha padrao
+# Usuario: admin
+# Senha  : admin
+def criar_primeiro_usuario():
+    sobre = '''
+        Usuario criado automaticamente.
+        Apenas para fazer o primeiro acesso ao sistema.
+        Apos logar-se com ele, troque a senha ou crie outro e apague este.
+        '''
+    u = User(username='admin', about_me=sobre)
+    u.set_password('admin')
+    db.session.add(u)
+    db.session.commit()
+
+
+# Para saber qual usuario, a aplicacao faz uma busca no banco
 # passando o ID do usuario
 @login.user_loader
 def load_user(id):
@@ -65,10 +81,12 @@ class User(UserMixin, db.Model):
             return None
 
     def avatar(self, size):
-        # ffef6a9fa57db9e8c0dfc21f7bf64309
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
+        if self.email:
+            # ffef6a9fa57db9e8c0dfc21f7bf64309
+            digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+            return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+                digest, size)
+
     def follow(self, user):
         if not self.is_following(user):
             self.followed.append(user)

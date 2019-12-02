@@ -7,12 +7,26 @@
                 <img src="{{ user.avatar(128) }}">
             </td>
             <td>
+                
+                <h1>Usuário: {{ user.username }}</h1>
+                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                {% if user.last_seen %}<p>Visto a última vez: {{ user.last_seen }}</p>{% endif %}
+                <p>{{ user.followers.count() }} seguidores, {{ user.followed.count() }} seguindo.</p>
+                {% if user == current_user %}
+                <p><a href="{{ url_for('edit_profile') }}">Editar seu perfil</a></p>
+                {% elif not current_user.is_following(user) %}
+                <p><a href="{{ url_for('follow', username=user.username) }}">Seguir</a></p>
+                {% else %}
+                <p><a href="{{ url_for('unfollow', username=user.username) }}">Parar de Seguir</a></p>
+                {% endif %}                
+                
+
                 <h1>Usuário: {{ user.username }}</h1>
                 {% if user.about_me %}
                     <p>{{ user.about_me }}</p>
                 {% endif %}
                 {% if user.last_seen %}
-                    <p>Last seen on: {{ user.last_seen }}</p>
+                    <p>Visto por último em: {{ user.last_seen }}</p>
                 {% endif %}
                 {% if user == current_user %}
                     <p><a href="{{ url_for('edit_profile') }}">Editar perfil</a></p>
@@ -24,5 +38,13 @@
     {% for comunicado in comunicados %}
         {% include "_post.html" %}
     {% endfor %}
+
+    {% if prev_url %}
+        <a href="{{ prev_url }}">Mais novas</a>
+    {% endif %}
+    
+    {% if next_url %}
+        <a href="{{ next_url }}">Mais velhas</a>
+    {% endif %}    
 
 {% endblock %}

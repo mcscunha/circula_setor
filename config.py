@@ -56,3 +56,4 @@ class Config(object):
     MAIL_USERNAME='username'
     MAIL_PASSWORD='senha'
     
+    POSTS_PER_PAGE = 3

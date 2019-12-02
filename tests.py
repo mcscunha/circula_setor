@@ -1,3 +1,17 @@
+'''
+---------------------------------------------------------------------
+ATENCAO:
+---------------------------------------------------------------------
+    Para executar este arquivo, use a linha de comando.
+    Nao use o RUN (seta verde no canto superior direito do VS Code)
+    Iniciando pelo botao, o caminho para as bibliotecas é alterado
+    Use:
+        source ~/anaconda3/bin/activate circula_setor
+        cd <DIRETORIO_PROJETO>/CIRCULA_SETOR
+        python -u ./tests.py
+---------------------------------------------------------------------
+'''
+
 from datetime import datetime, timedelta
 import unittest
 from web_app import app, db

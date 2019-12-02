@@ -35,6 +35,25 @@
     {% block content %}
     {% endblock %}
 
+
+    {% if primeiro_usuario %}
+        <h1>Olá, admin. Seja bem vindo ao sistema</h1>
+        <h3>
+            <p>
+                Notamos que esta é a primeira execução do sistema.<br>
+                Então, o sistema criou um usuário padrão<br>
+            </p>
+        </h3>
+        <p>
+            Usuário: admin<br>
+            Senha  : admin<br> <br>
+            Por favor, após esse primeiro acesso você deve:<br>
+            Trocar a senha do admin<br>
+            ou<br>
+            Criar um novo usuário e apagar o usuário admin<br>
+        </p>
+    {% endif %}
+
 </body>
 
 </html>

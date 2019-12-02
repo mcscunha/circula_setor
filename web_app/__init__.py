@@ -31,7 +31,7 @@ login.login_view = 'login'
 
 # Para "perceber" mudancas nos tipos de dados no MODELS
 migrate = Migrate(compare_type=True)
-migrate.init_app(app)
+migrate.init_app(app, db)
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
@@ -56,7 +56,7 @@ if not app.debug:
         file_handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
         # Classes de logging: DEBUG, INFO, WARNING, ERROR e CRITICAL
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(logging.WARNING)
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)

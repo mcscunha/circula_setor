@@ -10,22 +10,73 @@ from web_app import db
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
 from werkzeug.urls import url_parse
-from web_app.models import User
+from web_app.models import User, criar_primeiro_usuario
 from web_app.forms import LoginForm
 from web_app.forms import RegistrationForm
 from web_app.forms import EditProfileForm
+from web_app.forms import PostForm
+from web_app.models import Comunicado
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', title='Sistema de Comunicação Interna')
+    form = PostForm()
+    if form.validate_on_submit():
+        # O parametro titulo é pego do formulario asssociado ao objeto: form.
+        # Declarado acima
+        comunicado = Comunicado(titulo=form.post.data, autor=current_user)
+        db.session.add(comunicado)
+        db.session.commit()
+        flash('Sua postagem está disponível aos leitores!')
+        # Pratica comum em respostas de formularios. 
+        # Evitar erro ao atualizar pagina
+        # Tecnica chamada: Padrao Post/Redirect/Get
+        return redirect(url_for('index'))
+    
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+
+    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
+    return render_template("index.html",
+                           title='Página Principal',
+                           form=form,
+                           comunicados=posts.items,
+                           next_url=next_url,
+                           prev_url=prev_url)
+    
+
+@app.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    posts = Comunicado.query.order_by(Comunicado.dtCadastro.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('explore', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) if posts.has_prev else None
+    return render_template('index.html',
+                           title='Navegar',
+                           comunicados=posts.items,
+                           prev_url=prev_url,
+                           next_url=next_url)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    query = db.session.query(User).count()
+    print('[ INFO ] Numero de usuarios:', query)
+    if query == 0:
+        criar_primeiro_usuario()
+        # somente usar url_for quando chamar funcoes.
+        # Nao serve para chamar arquivos HTML
+        return render_template('info_usu_padrao.html')
+
     if current_user.is_authenticated:
+        # Como esta usando url_for, 
+        # quer dizer q esta chamando a funcao acima INDEX
         return redirect(url_for('index'))
 
     form = LoginForm()
@@ -70,12 +121,16 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    comunicados = [
-        {'nome': user, 'body': 'Comunicado #1'},
-        {'nome': user, 'body': 'Comunicado #2'}
-    ]
-    return render_template('user.html', user=user, comunicados=comunicados)
-
+    page = request.args.get('page', 1, type=int)
+    posts = Comunicado.query.order_by(Comunicado.dtCadastro.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
+    return render_template('user.html',
+                           user=user,
+                           posts=posts.items,
+                           next_url=next_url,
+                           prev_url=prev_url)
 
 @app.before_request
 def before_request():
@@ -103,3 +158,34 @@ def edit_profile():
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
 
+
+@app.route('/follow/<username>')
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Usuário {} não encontrado.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('Você não pode seguir a si mesmo!')
+        return redirect(url_for('user', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash('Você está seguindo {}!'.format(username))
+    return redirect(url_for('user', username=username))
+
+
+@app.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Usuário {} não encontrado.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('Você nao pode seguir a si mesmo!')
+        return redirect(url_for('user', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('Você não está seguindo {}.'.format(username))
+    return redirect(url_for('user', username=username))

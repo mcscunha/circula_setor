@@ -1,8 +1,8 @@
 """Criando o banco
 
-Revision ID: 20340faa39b0
+Revision ID: 15942aaed5e6
 Revises: 
-Create Date: 2019-11-21 16:28:28.809062
+Create Date: 2019-12-01 16:18:18.575865
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '20340faa39b0'
+revision = '15942aaed5e6'
 down_revision = None
 branch_labels = None
 depends_on = None
