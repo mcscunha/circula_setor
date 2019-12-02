@@ -12,6 +12,10 @@ from flask_login import UserMixin
 from web_app import login
 # Sobre Gravatar
 from hashlib import md5
+# Email
+from time import time
+import jwt
+from app import app
 
 
 # Se nao existir qualquer usuario no banco, crie um administrador
@@ -108,6 +112,20 @@ class User(UserMixin, db.Model):
             )
         own = Comunicado.query.filter_by(idUsuario=self.id)
         return followed.union(own).order_by(Comunicado.dtCadastro.desc())
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
 
 class Setor(db.Model):

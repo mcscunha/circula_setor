@@ -11,6 +11,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from logging.handlers import SMTPHandler
 from logging.handlers import RotatingFileHandler
+from flask_mail import Mail
+
 
 # from flask import Flask
 # from flask_sqlalchemy import SQLAlchemy
@@ -33,6 +35,10 @@ login.login_view = 'login'
 migrate = Migrate(compare_type=True)
 migrate.init_app(app, db)
 
+# Instancia para trabalhar com e-mails
+mail = Mail(app)
+
+# 
 if not app.debug:
     if app.config['MAIL_SERVER']:
         auth = None
