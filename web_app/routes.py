@@ -18,7 +18,7 @@ from web_app.forms import PostForm
 from web_app.models import Comunicado
 from web_app.forms import ResetPasswordRequestForm
 from web_app.email import send_password_reset_email
-from app.forms import ResetPasswordForm
+from web_app.forms import ResetPasswordForm
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -36,7 +36,7 @@ def reset_password_request():
     # Caso contrario, entraria em loop infinito!
     # Porque este comando chama uma funcao e nao um HTML
     return render_template('reset_password_request.html',
-                           title='Reset Password',
+                           title='Resetar Senha',
                            form=form)
 
 

@@ -15,7 +15,7 @@ from hashlib import md5
 # Email
 from time import time
 import jwt
-from app import app
+from web_app import app
 
 
 # Se nao existir qualquer usuario no banco, crie um administrador

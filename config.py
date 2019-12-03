@@ -41,19 +41,31 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Configuracao para envio de emails automatico
-    # MAIL_SERVER = os.environ.get('MAIL_SERVER')
-    # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
-    # MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
-    # MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    # MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    ADMINS = ['your-email@example.com']
-    MAIL_SERVER='localhost'
-    MAIL_PORT=8025
-    
-    # MAIL_SERVER=smtp.googlemail.com
-    # MAIL_PORT=587
-    MAIL_USE_TLS=1
-    MAIL_USERNAME='username'
-    MAIL_PASSWORD='senha'
-    
+    # MAIL_SERVER = 'smtp.gmail.com'
+    # MAIL_PORT = 587
+    # MAIL_USE_SSL = True
+    # MAIL_USERNAME = 'contato@gmail.com'
+    # MAIL_PASSWORD = 'password'
+
     POSTS_PER_PAGE = 3
+    
+    # Para utilizar estas configuracoes abaixo,
+    # ative a seguinte linha no shell:
+    # 
+    # python -m smtpd -n -c DebuggingServer localhost:8025
+    #
+    # Assim, toda vez q o sistema enviar um mail, este será visto no shell
+    # Ele nao enviará realmente o mail, mas serve para testes
+    ADMINS = ['from@localhost.com']
+    MAIL_SERVER = 'localhost'
+    MAIL_PORT = 8025
+    # MAIL_USE_TLS = False
+    # MAIL_USE_SSL = False
+    # #MAIL_DEBUG = app.debug
+    # MAIL_USERNAME = None
+    # MAIL_PASSWORD = None
+    # MAIL_DEFAULT_SENDER = None
+    # MAIL_MAX_EMAILS = None
+    # #MAIL_SUPPRESS_SEND = app.testing
+    # MAIL_ASCII_ATTACHMENTS = False
+    

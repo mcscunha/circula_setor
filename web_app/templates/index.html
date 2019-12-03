@@ -28,12 +28,19 @@
         <p> {% include '_post.html' %} </p>
     {% endfor %}
 
-    {% if prev_url %}
-        <a href="{{ prev_url }}">Mais novas</a>
-    {% endif %}
-
-    {% if next_url %}
-        <a href="{{ next_url }}">Mais velhas</a>
-    {% endif %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Mais Novas
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Mais Antigas <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
 {% endblock %}

@@ -12,16 +12,7 @@ from flask_login import LoginManager
 from logging.handlers import SMTPHandler
 from logging.handlers import RotatingFileHandler
 from flask_mail import Mail
-
-
-# from flask import Flask
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_migrate import Migrate
-# from flask_login import LoginManager
-# from config import Config
-# import logging
-# from logging.handlers import SMTPHandler, RotatingFileHandler
-# import os
+from flask_bootstrap import Bootstrap
 
 
 app = Flask(__name__)
@@ -37,6 +28,9 @@ migrate.init_app(app, db)
 
 # Instancia para trabalhar com e-mails
 mail = Mail(app)
+
+# Iniciando o modulo bootstrap
+bootstrap = Bootstrap(app)
 
 # 
 if not app.debug:
